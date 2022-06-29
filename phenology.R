@@ -51,7 +51,7 @@ plutil::ursula(3)
    fileout <- paste0("conc1",season,".tif")
    print(range(d3))
    d3name <- format(d3,"%y%m%d")
-   msk <- c(msk=ursa("dist2land")>=0)
+   msk <- c(msk=ursa("ref/dist2land")>=0)
    if (F) {
       belt <- as.data.frame(ursa(1L))
       xy <- sf::sf_project(from=spatial_crs(msk),to=spatial_crs(4326)
@@ -680,7 +680,7 @@ plutil::ursula(3)
    ice <- data.frame(sia=nature[ind1],sid=nature[ind2]
                     ,ice=gsub("\\D+","ice",nature[ind2]))
   # print(series(ice))
-   session_grid("dist2land.tif")
+   session_grid("ref/dist2land.tif")
    if (T) {
       res <- ursa(bandname=ice$ice)
       for (i in seq(res) |> sample()) {
@@ -875,7 +875,7 @@ plutil::ursula(3)
    0L
 }
 'manage' <- function(devel=FALSE) {
-   ref <- ursa_read("dist2land.tif")
+   ref <- ursa_read("ref/dist2land.tif")
    iceconc <- c("../v43nt/conc","./conc")[1]
    if (!devel) {
       list2 <- interleaving(iceconc) |> rev() #|> tail(-1) #|> head(4)
