@@ -1,4 +1,4 @@
-if (requireNamespace("plu22til")) {
+if (requireNamespace("plutil")) {
    plutil::ursula(3)
 } else {
    require(ursa)
@@ -946,3 +946,5 @@ invisible(if (ursa:::.argv0()=="phenology.R") {
    season_length()
   # check_types()
 })
+if (requireNamespace("plutil")) {
+   plutil::ursula(3)
