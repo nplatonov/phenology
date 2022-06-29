@@ -14,6 +14,4 @@ article/*.docx
 !phenology.R 
 !README.md
 !LICENSE
-.gitAction.*
-.gitignore 
-
+.git*
