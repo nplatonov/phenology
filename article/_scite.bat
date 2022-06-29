@@ -1,1 +1,0 @@
-render manuscript.Rmd coauthor
