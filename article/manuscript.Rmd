@@ -1,7 +1,7 @@
 ---
-pagetitle: SID/SIA
-title1: Arctic sea ice phenology mapping and application
-author1:
+pagetitle: SID/SIA `r format(Sys.time(),'(%H:%M)')`
+title: Arctic sea ice phenology mapping and application
+author:
  - name: Nikita Platonov
    affiliation: A. N. Severtsov Institute of Ecology and Evolution of Russian Academy of Sciences, Moscow, Russia
    orcid: 0000-0001-7196-7882
@@ -52,7 +52,7 @@ Passive microwave sea ice concentration data [@NASATeam_GSFC] is selected for lo
 
 ## Isotonic regression
 
-Isotonic unimodal regression [@Turner1997] is used for fitting of SIC time-series. Implemented in package `Iso` [@r-Iso] for R statistical software [@r-core]. Isotonic fitted curve excludes double or multiple crossing threshold value, which was reached in 5% cases of fitted smoothed regional SIC time-series [@SternLaidre2016].
+Isotonic unimodal regression [@Turner1997] is used for fitting of SIC time-series. Implemented in package `Iso` [@r-Iso] for R statistical software [@r-core]. Isotonic fitted curve excludes double or multiple crossing threshold value, which was reached in 4.8 % cases of fitted smoothed regional SIC time-series [@SternLaidre2016].
 
 :::aside
 > In practice, out of 2736 crossing dates (36 years × 2 seasons × 19 regions × 2 time series
@@ -102,7 +102,27 @@ knitr::include_graphics("assets/transitions.png",dpi=300)
 
 We selected SIC `r threshold`, which is abopted from @Parkinson1999. This is common value for estimating sea ice extent [@NSIDC_ice-extent].
 
-## Short-terms states
+## Sea ice stages
+
+:::aside
+2013:
+
+>
+*Resident ice* – status of grid cell, for which the ice-free conditions are absent during the considered period. The extent of resident ice is less than or equal to extent of multiyear ice. 
+*Resident open water* – status of grid cell, for which the icy conditions are absent during the considered period.
+*Ice presence, icy conditions* mean that sea ice concentration is ≥15%.
+*Ice-free conditions* mean that sea ice concentration is <15%.
+:::
+
+### Resident ice types
+
+Resident open water where ice is absent during the entire winter period
+
+Resident ice where ice is present all summer.
+
+We distinguish summer minimum extent and extent of resident ice. The former is set of cells with ice for the date of mimimal seasonal extent. The later is set of cells without SID or SIA detection.
+
+### Short-terms stages
 
 Comparing summer minimal extent and extent of resident sea ice, we estimated `r stage$summer` as a minimal duration for open-water period during summer.
 Comparing winter maximal extent and outer extent without resident open water, we estimated `r stage$winter` as a minimal duration for sea ice period during winter.
@@ -135,13 +155,13 @@ Each phenological state (SID or SIA) is considered independently. For each pheno
 
 Generally, two time-series: original $x$ and inverted $100-x$ are fitted. For "max" season only original $x$ is considered. For "min" season only inverted $100-x$ is considered. For "mlt" and "frz" seasons both fittings compete, and fitting with minimal RMSE is selected. Backward transition $100-x$ is applied for inverted fitting.
 
-### Onset quality
+### Onset resilience
 
-Additional numeric value for onset quality, proximity to ends of time-series, is included to interim output for estimating quality of fitting. Proximity to ends is estimated as a fraction between 0.0 and 0.5, where 0.0 means position in the head or tail of time-series, 0.5 means position in the middle of time-series. There is more uncertainty in the proximity to the boundaries of time-series period because of the uncertain time-series behavior beyond considered period.
+Additional numeric value for resilience of onset date, proximity to ends of time-series, is included to interim output for estimating quality of fitting. Proximity to ends is estimated as a fraction between 0.0 and 0.5, where 0.0 means position in the head or tail of time-series, 0.5 means position in the middle of time-series. There is more uncertainty in the proximity to the boundaries of time-series period because of the uncertain time-series behavior beyond considered period.
 
 ## Decision making
 
-Because output has length 3, only one value is selected based on maximal value of onset quality.
+Because output has length 3, only one value is selected based on maximal value of onset resilience.
 
 :::aside
 Deprecated:
@@ -156,7 +176,7 @@ Raster maps with two kinds of information.
 
 1. Values between 15 and 600 denote DOY of SID onset or SIA onset.
 
-1. Values greater than 600 are flags.
+1. Values between 600 and 1000 are flags.
 
    + 990: resident sea ice  
    + 980: resident open water 
@@ -181,13 +201,15 @@ Raster maps with two kinds of information.
 
 1. Values greater than 6500 are dates with origin `r format(ursa:::.origin(),"%Y-%m-%d %H:%M:%S")`.
 
+Based on available SIC [@NASATeam_GSFC] the interleaving starts by 1988 SID and ends 2001 SID. For demonstration purposed four maps in the tail of sequence are used: 2019 SIA, 2020 SID, 2020 SIA, 2021 SID
+
 ## Quality assessment
 
 We developed two kind of maps for consequent interleaving.
 
-+ Difference between SIA dates and SID dates -- length of open water season
++ Difference between consequent SIA dates and SID dates -- duration of open water season. For all 33 maps during 1988-2020, based on consequent SIA after SID, with total 524971 cells there are 10 cells (19ppm) with negative values of season duration: 4 for 2014, 1 for 2005, 3 for 2000 and 1 for 1996. 
 
-+ Difference between SID dates and SIA dates -- length of ice season
++ Difference between consequent SID dates and SIA dates -- duration of ice season. For all maps there was not detection of negative values.
 
 
 
@@ -198,6 +220,7 @@ Output example is illustrated on Figure \@ref(fig:onsets).
 ```{r onsets, fig.cap="Consequence of phenological seasons"}
 knitr::include_graphics("assets/onsets.png",dpi=48)
 ```
+<!--
 
 ## Comparison with 
 
@@ -208,7 +231,9 @@ knitr::include_graphics("assets/onsets.png",dpi=48)
 
    + SID *vs* date when "At least three consequent days with SIC<`r threshold`". 
 
-+ Difference in days between snowmelt onset and SID.
++ Difference in days between snowmelt onset [@Markus_PMW_data] and SID.
+
+-->
 
 # Application
 
@@ -233,8 +258,8 @@ knitr::include_graphics("assets/cumextent.png",dpi=250)
 ```{r telemetry, fig.cap="How to polar bear adapt to sea ice break-up"}
 knitr::include_graphics("assets/telemetry.png",dpi=300)
 ```
-:::note
-Figure \@ref(fig:telemetry) is apopted from @Rozhnov2017_hutuda. Would be better to use permitted data, like @Pagano2021_CRW.
+:::aside
+Figure \@ref(fig:telemetry) is adopted from @Rozhnov2017_hutuda. Would be better to use permitted data, like @Pagano2021_CRW.
 :::
 
 ## Isodates
@@ -261,9 +286,6 @@ Early freeze onset and freeze onset estimates [@Markus_PMW_data] based on passiv
 
 # Discussion
 
-## "Resident ice" term
-
-We used "resident" ice instead of summer minimum. 
 
 ## Monitoring tasks
 
@@ -285,12 +307,16 @@ The authors declare no conflict of interest.
 
 ## Availability of data and material
 
-+ Any stage: github R [@r-core] repository, including GeoTiff/NetCDF dataset, with Zenodo DOI. CRAN package.
+Github [nplatonov/phenology](https://github.com/nplatonov/phenology) repository with GeoTiff~~/NetCDF~~ dataset and source R [@r-core] code. Assigned Zenodo DOI. Dependence from package `ursa` [@r-ursa-dev], version ≥ 3.9.7.
+
++ R package on github with vignette, then CRAN. Only sia2019.tif, sia2020.tif, sid2020.tif, sid2021.tif. [Because](https://cran.r-project.org/web/packages/policies.html#Source-packages):
+
+   > As a general rule, neither data nor documentation should exceed 5MB (which covers several books). A CRAN package is not an appropriate way to distribute course notes, and authors will be asked to trim their documentation to a maximum of 5MB. 
 
 + After publication: add publication citing to package's "how to cite".
 
 + NSIDC dataset?
-
+   
 ## Authors' contributions
 
 NP: Locomotivation

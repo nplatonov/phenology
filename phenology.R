@@ -1,4 +1,9 @@
-plutil::ursula(3)
+if (requireNamespace("plu22til")) {
+   plutil::ursula(3)
+} else {
+   require(ursa)
+   stopifnot(packageVersion("ursa")>="3.9.7")
+}
 'seasonality' <- function(season) {
    if (missing(season))
       season <- "any2022"
@@ -399,9 +404,9 @@ plutil::ursula(3)
    }
    if (F & devel)
       print(y)
-   if (evolution %in% c("zmindrop","zminraise"))
+   if (evolution %in% c("mindrop","minraise"))
       L5 <- 100-Iso::ufit(100-y)$y
-   else if (evolution %in% c("zmaxdrop","zmaxraise"))
+   else if (evolution %in% c("maxdrop","maxraise"))
       L5 <- Iso::ufit(y)$y
    else {
       L1 <- Iso::ufit(100-y)
@@ -681,7 +686,7 @@ plutil::ursula(3)
                     ,ice=gsub("\\D+","ice",nature[ind2]))
   # print(series(ice))
    session_grid("ref/dist2land.tif")
-   if (T) {
+   if (F) {
       res <- ursa(bandname=ice$ice)
       for (i in seq(res) |> sample()) {
          cond1 <- ursa_exists(p1 <- file.path(phenology,ice$sia[i]))
@@ -713,7 +718,9 @@ plutil::ursula(3)
          res[i] <- v2-v1
       }
       res <- res[!band_blank(res)]
-      print(res)
+      bres <- band_stat(res)
+      print(bres)
+      print(sum(bres$n))
       if (F)
          ursa_write(res,file.path(phenology,"season_ow.tif"))
       if (T) {
@@ -935,7 +942,7 @@ plutil::ursula(3)
 invisible(if (ursa:::.argv0()=="phenology.R") {
   # prepare("./conc","sia2012")
   # manage(devel=T)
-   plot_onsets(path="output","sia2019 sid2020 sia2020 sid2021")
-  # season_length()
+  # plot_onsets(path="output","sia2019 sid2020 sia2020 sid2021")
+   season_length()
   # check_types()
 })
