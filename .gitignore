@@ -7,7 +7,7 @@
 article/*.knitted
 article/*.html
 article/*.docx
-*.R
+./*.R
 *.pdf
 *.Rout
 *.Rlog
