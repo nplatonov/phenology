@@ -8,3 +8,4 @@
 article/*.knitted
 article/*.html
 article/*.docx
+.gitignore 
