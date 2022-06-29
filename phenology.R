@@ -935,7 +935,7 @@ plutil::ursula(3)
 invisible(if (ursa:::.argv0()=="phenology.R") {
   # prepare("./conc","sia2012")
   # manage(devel=T)
-  # plot_onsets(path="output","sia2019 sid2020 sia2020 sid2021")
+   plot_onsets(path="output","sia2019 sid2020 sia2020 sid2021")
   # season_length()
   # check_types()
 })
