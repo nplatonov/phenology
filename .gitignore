@@ -15,4 +15,5 @@ article/*.docx
 !README.md
 !LICENSE
 .gitAction.*
+.gitignore 
 
