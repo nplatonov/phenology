@@ -27,7 +27,7 @@ if (requireNamespace("plutil")) {
                   )[transition]
    period
 }
-'iceconc_download' <- function(iceconc="./conc",season="sia2021"
+'iceconc_download' <- function(iceconc="./iceconc",season="sia2021"
                      ,nsidc=c(nt="0051",nrt="0081",bs="0079"),verbose=F) {
    wd <- setwd(iceconc);on.exit(setwd(wd))
    nsidc <- match.arg(nsidc)
@@ -202,7 +202,7 @@ if (requireNamespace("plutil")) {
    }
    if (!devel) {
       logname <- paste0(season,".Rlog")
-      if (file.exists(logname))
+      if ((!overwrite)&&(file.exists(logname)))
          return(20L)
       Fout <- file(logname,"wt")
       writeLines(as.character(Sys.time()),Fout)
@@ -883,11 +883,10 @@ if (requireNamespace("plutil")) {
 }
 'manage' <- function(devel=FALSE) {
    ref <- ursa_read("ref/dist2land.tif")
-   iceconc <- c("../v43nt/conc","./conc")[1]
+   iceconc <- c("../v43nt/conc","./iceconc")[1]
    if (!devel) {
-      list2 <- interleaving(iceconc) |> rev() #|> tail(-1) #|> head(4)
-      print(list2)
-      sapply(list2,phenology,iceconc=iceconc,overwrite=FALSE)
+      list2 <- interleaving(iceconc) |> rev() |> head(1) #|> head(4)
+      sapply(list2,phenology,iceconc=iceconc,overwrite=length(list2)==1)
    }
    else {
       fname <- c("sid2022","diff","diff.Rout")[3]
@@ -940,11 +939,12 @@ if (requireNamespace("plutil")) {
    0L
 }
 invisible(if (ursa:::.argv0()=="phenology.R") {
-  # prepare("./conc","sia2012")
-  # manage(devel=T)
+  # prepare("./iceconc","sia2012")
+   manage(devel=F)
   # plot_onsets(path="output","sia2019 sid2020 sia2020 sid2021")
-   season_length()
+  # season_length()
   # check_types()
 })
 if (requireNamespace("plutil")) {
    plutil::ursula(3)
+}
